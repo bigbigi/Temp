@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="VST_AUTO_FIT">
+        <attr name="enabled_auto_fit" format="boolean" />
+    </declare-styleable>
+    <!-- 配置是否需要对自定义字体出现横线问题的适配-->
+    <declare-styleable name="VST_AUTO_TF">
+        <attr name="enabled_auto_ft" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="VST_IMG_ANIMATION">
+        <attr name="show_animation" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="VST_IMG_SRC">
+        <attr name="auto_src" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="VST_IMG_BACKGROUND">
+        <attr name="auto_background" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="VST_TEXTVIEW_DRAWABLE">
+        <!--
+        这些参数目前只有TextView实现，其子类可以类推参见TextView
+         -->
+        <attr name="auto_drawableLeft" format="reference" />
+        <attr name="auto_drawableTop" format="reference" />
+        <attr name="auto_drawableRight" format="reference" />
+        <attr name="auto_drawableBottom" format="reference" />
+    </declare-styleable>
+    <declare-styleable name="ImageView">
+        <attr name="autoFitXY" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="GifTextureView">
+        <attr name="gifSource" format="reference|string" />
+        <attr name="isOpaque" format="boolean" />
+    </declare-styleable>
+    <declare-styleable name="GifView">
+        <attr name="freezesAnimation" format="boolean" />
+    </declare-styleable>
+
+    <declare-styleable name="ShimmerView">
+        <attr name="reflectionColor" format="color"/>
+    </declare-styleable>
+
+</resources>
