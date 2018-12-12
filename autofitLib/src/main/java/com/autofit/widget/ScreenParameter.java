@@ -14,24 +14,18 @@ import android.view.ViewGroup.MarginLayoutParams;
 import android.view.WindowManager;
 import android.widget.FrameLayout.LayoutParams;
 
-
-import com.amway.wifianalyze.lib.R;
+import com.autofit.lib.R;
 
 import java.lang.reflect.Method;
 
-/**
- * @author 武江南
- * @ClassName: ScreenParameter
- * @Description: TODO(获取屏幕的一些参数)
- * @date 2015-4-3 下午7:19:46
- */
+
 public final class ScreenParameter {
 
     private static float sDensity;
     private static int sWidth, sHeight;
     private static int sDensityDpi;
-    private static float sDefaultWidth = 1334.0f;
-    private static float sDefaultHeight = 750.0f;
+    private static float sDefaultWidth = 1280.0f;
+    private static float sDefaultHeight = 800.0f;
     private static float sRatioX = 0;
     private static float sRatioY = 0;
     private static float sRadtio;

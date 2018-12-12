@@ -5,10 +5,85 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@drawable/bg1" />
+
+    <com.autofit.widget.TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="23px"
+        android:text="5G远程控制"
+        android:textColor="#32ffff"
+        android:textSize="43px" />
+
+    <com.autofit.widget.LinearLayout
+        android:layout_width="206px"
+        android:layout_height="46px"
+        android:layout_gravity="right"
+        android:layout_marginRight="71px"
+        android:layout_marginTop="65px"
+        android:background="@drawable/ic_sz"
+        android:orientation="horizontal">
+
+        <com.autofit.widget.TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="34px"
+            android:text="速率"
+            android:textColor="#e3ffff"
+            android:textSize="19px" />
+
+        <com.autofit.widget.TextView
+            android:id="@+id/netdelay"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10px"
+            android:text="42KB/S"
+            android:textColor="#e3ffff"
+            android:textSize="28px" />
+    </com.autofit.widget.LinearLayout>
+
+    <com.autofit.widget.LinearLayout
+        android:layout_width="206px"
+        android:layout_height="46px"
+        android:layout_gravity="right"
+        android:layout_marginRight="71px"
+        android:layout_marginTop="131px"
+        android:background="@drawable/ic_sz"
+        android:orientation="horizontal">
+
+        <com.autofit.widget.TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="34px"
+            android:text="速率"
+            android:textColor="#e3ffff"
+            android:textSize="19px" />
+
+        <com.autofit.widget.TextView
+            android:id="@+id/netspeed"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_vertical"
+            android:layout_marginLeft="10px"
+            android:text="42KB/S"
+            android:textColor="#e3ffff"
+            android:textSize="28px" />
+    </com.autofit.widget.LinearLayout>
+
+
     <com.reomote.carcontroller.widget.Stick
-        android:background="#fff"
-        android:layout_width="200px"
-        android:layout_height="200px"
-        android:layout_gravity="center"/>
+        android:layout_width="192px"
+        android:layout_height="192px"
+        android:layout_gravity="bottom"
+        android:layout_marginBottom="66px"
+        android:layout_marginLeft="94px"
+        android:background="@drawable/ic_kuang" />
 
 </merge>
