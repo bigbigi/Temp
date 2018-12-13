@@ -1,1 +1,1 @@
-include ':app',':autofitLib'
+include ':app',':autofitLib','libVlc'
