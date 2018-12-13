@@ -205,12 +205,17 @@ public class VlcPlayer extends FrameLayout implements SurfaceHolder.Callback, IV
 
     }
 
-    public void stop(){
+    public void stop() {
         if (mMediaPlayer != null) {
             mMediaPlayer.stop();
             mSurfaceView.setKeepScreenOn(false);
             mMediaPlayer.eventVideoPlayerActivityCreated(false);
         }
+    }
+
+    public void destroy() {
+        Log.d(TAG, "destroy");
+//        mMediaPlayer.destroy();
     }
 
 }

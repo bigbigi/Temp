@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/activity_main"
     android:layout_width="match_parent"
@@ -51,7 +52,8 @@
             android:layout_marginLeft="10px"
             android:text="42KB/S"
             android:textColor="#e3ffff"
-            android:textSize="28px" />
+            android:textSize="28px"
+            app:self_typeface="true" />
     </com.autofit.widget.LinearLayout>
 
     <com.autofit.widget.LinearLayout
@@ -80,7 +82,8 @@
             android:layout_marginLeft="10px"
             android:text="42KB/S"
             android:textColor="#e3ffff"
-            android:textSize="28px" />
+            android:textSize="28px"
+            app:self_typeface="true" />
     </com.autofit.widget.LinearLayout>
 
 

@@ -7,15 +7,19 @@ import android.os.Build;
 import android.text.SpannableString;
 import android.text.TextUtils;
 import android.util.AttributeSet;
+import android.util.Log;
 import android.util.TypedValue;
 import android.view.ViewGroup.LayoutParams;
 
+
+import com.autofit.lib.R;
 
 import net.sf.chineseutils.ChineseUtils;
 
 public class TextView extends android.widget.TextView implements IAutoFit {
 
     private boolean mEnableAutoFit = true;
+    private boolean mSelfTypeface = false;
 
     public TextView(Context context) {
         super(context);
@@ -33,7 +37,10 @@ public class TextView extends android.widget.TextView implements IAutoFit {
 
     private void initAutoView(Context context, AttributeSet attrs) {
         this.setTextSize(getTextSize());
-        mEnableAutoFit = ScreenParameter.getEnableAutoFit(context, attrs);
+        TypedArray array = context.obtainStyledAttributes(attrs, R.styleable.VST_AUTO_FIT);
+        mEnableAutoFit = array.getBoolean(R.styleable.VST_AUTO_FIT_enabled_auto_fit, true);
+        mSelfTypeface = array.getBoolean(R.styleable.VST_AUTO_FIT_self_typeface, false);
+        array.recycle();
         this.setPadding(getPaddingLeft(), getPaddingTop(), getPaddingRight(), getPaddingBottom());
         if (Build.VERSION.SDK_INT > 15) {
             setLineSpacing(getLineSpacingExtra(), getLineSpacingMultiplier());
@@ -115,15 +122,17 @@ public class TextView extends android.widget.TextView implements IAutoFit {
     @Override
     public void setTypeface(Typeface tf) {
         Typeface newTf = null;
-        if (ScreenParameter.isNeedSetFont) {
+        if (ScreenParameter.isNeedSetFont && !mSelfTypeface) {
             newTf = ScreenParameter.getTypeFace(getContext().getApplicationContext());
         }
+        Log.d("big","newTf:"+newTf+",isFT:"+!ScreenParameter.isFT);
         if (!ScreenParameter.isFT && newTf != null) {
             super.setTypeface(newTf);
         } else {
             super.setTypeface(tf);
         }
     }
+
 
     @Override
     public void setText(CharSequence text, BufferType type) {

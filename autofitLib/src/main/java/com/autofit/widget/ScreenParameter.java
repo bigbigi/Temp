@@ -344,19 +344,19 @@ public final class ScreenParameter {
     private static Typeface sTypeFace;
 
     public static Typeface getTypeFace(Context ctx) {
-        return null;
-       /* if (sTypeFace == null) {
+        if (sTypeFace == null) {
             synchronized (ScreenParameter.class) {
                 if (sTypeFace == null) {
                     try {
-                        sTypeFace = Typeface.createFromAsset(ctx.getAssets(), "fonts/flfbls.ttf");
+                        sTypeFace = Typeface.createFromAsset(ctx.getAssets(), "fonts/fzlth.ttf");
+//                        sTypeFace = Typeface.createFromAsset(ctx.getAssets(), "fonts/akkurat.ttf");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }
                 }
             }
         }
-        return sTypeFace;*/
+        return sTypeFace;
     }
 
     public static double getScreenDimension(Context ctx) {

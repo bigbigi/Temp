@@ -2,6 +2,7 @@
 <resources>
     <declare-styleable name="VST_AUTO_FIT">
         <attr name="enabled_auto_fit" format="boolean" />
+        <attr name="self_typeface" format="boolean"/>
     </declare-styleable>
     <!-- 配置是否需要对自定义字体出现横线问题的适配-->
     <declare-styleable name="VST_AUTO_TF">
