@@ -91,9 +91,9 @@ public class TracerouteWithPing {
      * @param url    The url to trace
      * @param maxTtl The max time to live to set (ping param)
      */
-    public void executeTraceroute(String url, int what, Callback callback) {
+    public void executeTraceroute(String url, int what) {
         this.finishedTasks = 0;
-        new ExecutePingAsyncTask(url, what, callback).execute();
+        new ExecutePingAsyncTask(url, what).execute();
     }
 
     /**
@@ -161,12 +161,9 @@ public class TracerouteWithPing {
 
         private boolean isfinished = false;
 
-        private Callback callback;
-
-        public ExecutePingAsyncTask(String url, int what, Callback callback) {
+        public ExecutePingAsyncTask(String url, int what) {
             this.currentWhat = what;
             this.urlToPing = url;
-            this.callback = callback;
         }
 
         /**
@@ -200,9 +197,6 @@ public class TracerouteWithPing {
                     mOnTraceRouteListener.onException(currentWhat);
                 }
             }
-            if (callback != null) {
-                callback.onCallBack(true);
-            }
             return res;
         }
 
@@ -216,7 +210,7 @@ public class TracerouteWithPing {
         private String launchPing(String url) throws Exception {
             // Build ping command with parameters
             Process p;
-            String command = "ping -c 4 ";
+            String command = "ping -c 1 ";
 
             Log.d(TAG, "Will launch : " + command + url);
 

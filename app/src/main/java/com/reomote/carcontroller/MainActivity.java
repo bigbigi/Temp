@@ -15,12 +15,19 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.autofit.widget.TextView;
+import com.reomote.carcontroller.utils.TracerouteWithPing;
 import com.reomote.carcontroller.widget.Stick;
 import com.reomote.carcontroller.widget.VideoView;
 
 
-public class MainActivity extends Activity implements Stick.Callback {
-    VideoView mPlayer;
+public class MainActivity extends Activity implements Stick.Callback,
+        TracerouteWithPing.OnTraceRouteListener {
+    private static final String IP = "10.2.0.76";
+    private static final String PATH = "rtsp://13728735758:abcd1234@10.2.0.76:554/stream1";
+    private static final int DURATION = 3000;
+
+    private VideoView mPlayer;
+    private TracerouteWithPing mTraceroute;
     private TextView mTitle;
     private TextView mDelayText;
     private TextView mSpeedText;
@@ -50,19 +57,17 @@ public class MainActivity extends Activity implements Stick.Callback {
             mDelayText.setTypeface(speedTypeFace);
             mSpeedText.setTypeface(speedTypeFace);
         }
-        WindowManager wm = (WindowManager) getSystemService(Context.WINDOW_SERVICE);
-        Display display = wm.getDefaultDisplay();
-        int dw = display.getWidth();
-        int dh = display.getHeight();
-        Log.d("big", "screen:" + dw + "," + dh);
+        mTraceroute = new TracerouteWithPing(this);
+        mTraceroute.setOnTraceRouteListener(this);
         mHandler.sendEmptyMessage(MSG_SPEED);
+        mHandler.sendEmptyMessage(MSG_PING);
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        mPlayer.setVideoPath("rtsp://13728735758:abcd1234@10.2.0.76:554/stream1");
+        mPlayer.setVideoPath(PATH);
     }
 
     @Override
@@ -71,10 +76,18 @@ public class MainActivity extends Activity implements Stick.Callback {
         mPlayer.pause();
     }
 
+    @Override
+    public void finish() {
+        super.finish();
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
     //------------------------getSpeed---------------------------
     private long mLastTotalBytes;
     private long mLastTimeStamp;
     private static final int MSG_SPEED = 1;
+    private static final int MSG_DELAY = 2;
+    private static final int MSG_PING = 3;
     @SuppressLint("HandlerLeak")
     private Handler mHandler = new Handler() {
         @Override
@@ -82,7 +95,18 @@ public class MainActivity extends Activity implements Stick.Callback {
             switch (msg.what) {
                 case MSG_SPEED:
                     getSpeed();
-                    sendEmptyMessageDelayed(MSG_SPEED, 3000);
+                    if (!isFinishing()) {
+                        sendEmptyMessageDelayed(MSG_SPEED, DURATION);
+                    }
+                    break;
+                case MSG_DELAY:
+                    mDelayText.setText(String.format("%d MS", msg.arg2));
+                    if (!isFinishing()) {
+                        sendEmptyMessageDelayed(MSG_PING, DURATION);
+                    }
+                    break;
+                case MSG_PING:
+                    mTraceroute.executeTraceroute(IP, 0);
                     break;
             }
         }
@@ -101,10 +125,29 @@ public class MainActivity extends Activity implements Stick.Callback {
         return TrafficStats.getUidRxBytes(Process.myUid()) == TrafficStats.UNSUPPORTED ? 0 : (TrafficStats.getTotalRxBytes() / 1024);//转为KB
     }
 
-    //------------------------getSpeed---------------------------
+    //------------------------getDelay---------------------------
+
+    @Override
+    public void onResult(int what, int loss, int delay) {
+        Message msg = mHandler.obtainMessage(MSG_DELAY);
+        msg.arg1 = loss;
+        msg.arg2 = delay;
+        mHandler.sendMessage(msg);
+    }
+
+    @Override
+    public void onTimeout(int what) {
+
+    }
+
+    @Override
+    public void onException(int what) {
+
+    }
+
+    //------------------------getDelay---------------------------
     @Override
     public void onCallback(float degree, float ratioX, float ratioY) {
         Log.d("big", "degree:" + degree + ",ratioX:" + ratioX + ",ratioY:" + ratioY);
     }
-
 }
