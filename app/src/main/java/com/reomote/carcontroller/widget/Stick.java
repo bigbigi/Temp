@@ -26,6 +26,10 @@ public class Stick extends com.autofit.widget.FrameLayout {
         init();
     }
 
+    public interface Callback {
+        void onCallback(float degree, float ratioX, float ratioY);
+    }
+
     private View mPoint;
     private int mPointRadius = 33;
     private int mRadius;
@@ -35,6 +39,7 @@ public class Stick extends com.autofit.widget.FrameLayout {
     private Drawable mNaviDrawable;
     private Matrix mMatrix = new Matrix();
     private boolean mIsTouch = false;
+    private Callback mCallback;
 
     private void init() {
         mLightDrawable = getResources().getDrawable(R.drawable.ic_light);
@@ -58,19 +63,11 @@ public class Stick extends com.autofit.widget.FrameLayout {
         });
     }
 
-    @Override
-    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
-        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
-        int naviWidth = ScreenParameter.getFitWidth(this, 193);
-        mNaviDrawable.setBounds((getWidth() - naviWidth) / 2, (getHeight() - naviWidth) / 2,
-                (getWidth() + naviWidth) / 2, (getHeight() + naviWidth) / 2);
-        mLightDrawable.setBounds(0, 0, getWidth(), getHeight());
-        mRadius = getWidth() / 2 - ScreenParameter.getFitWidth(this,5);
-    }
 
     @Override
     protected void onDraw(Canvas canvas) {
         super.onDraw(canvas);
+        initSize();
         if (mIsTouch) {
             canvas.save();
             canvas.setMatrix(mMatrix);
@@ -78,6 +75,20 @@ public class Stick extends com.autofit.widget.FrameLayout {
             canvas.restore();
         } else {
             mNaviDrawable.draw(canvas);
+        }
+    }
+
+    private void initSize() {
+        if (mRadius == 0 && getWidth() != 0) {
+            int naviWidth = ScreenParameter.getFitWidth(this, 193);
+            int width = getWidth();
+            int height = getHeight();
+            mNaviDrawable.setBounds((width - naviWidth) / 2, (height - naviWidth) / 2,
+                    (width + naviWidth) / 2, (height + naviWidth) / 2);
+            mLightDrawable.setBounds(0, 0, width, height);
+            mRadius = width / 2 - ScreenParameter.getFitWidth(this, 5);
+            invalidate();
+            Log.d("big", "size:" + width + ",height:" + height);
         }
     }
 
@@ -132,6 +143,12 @@ public class Stick extends com.autofit.widget.FrameLayout {
         mLastX = dx;
         mLastY = dy;
         invalidate();
-        Log.d("big", "degree:" + degree);
+        if (mCallback != null) {
+            mCallback.onCallback(degree, dx / dr, dy / dr);
+        }
+    }
+
+    public void setCallback(Callback callback) {
+        this.mCallback = callback;
     }
 }

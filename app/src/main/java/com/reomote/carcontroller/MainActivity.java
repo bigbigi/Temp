@@ -15,14 +15,16 @@ import android.view.Display;
 import android.view.WindowManager;
 
 import com.autofit.widget.TextView;
+import com.reomote.carcontroller.widget.Stick;
 import com.reomote.carcontroller.widget.VideoView;
 
 
-public class MainActivity extends Activity {
+public class MainActivity extends Activity implements Stick.Callback {
     VideoView mPlayer;
     private TextView mTitle;
     private TextView mDelayText;
     private TextView mSpeedText;
+    private Stick mStick;
 
 
     @Override
@@ -33,6 +35,8 @@ public class MainActivity extends Activity {
         mDelayText = (TextView) findViewById(R.id.netdelay);
         mSpeedText = (TextView) findViewById(R.id.netspeed);
         mTitle = (TextView) findViewById(R.id.title);
+        mStick = (Stick) findViewById(R.id.stick);
+        mStick.setCallback(this);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mTitle.setLetterSpacing(0.1f);
         }
@@ -96,5 +100,11 @@ public class MainActivity extends Activity {
     public long getTotalRxBytes() {
         return TrafficStats.getUidRxBytes(Process.myUid()) == TrafficStats.UNSUPPORTED ? 0 : (TrafficStats.getTotalRxBytes() / 1024);//转为KB
     }
+
     //------------------------getSpeed---------------------------
+    @Override
+    public void onCallback(float degree, float ratioX, float ratioY) {
+        Log.d("big", "degree:" + degree + ",ratioX:" + ratioX + ",ratioY:" + ratioY);
+    }
+
 }

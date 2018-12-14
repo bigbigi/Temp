@@ -93,6 +93,7 @@
     </com.autofit.widget.LinearLayout>
 
     <com.reomote.carcontroller.widget.Stick
+        android:id="@+id/stick"
         android:layout_width="192px"
         android:layout_height="192px"
         android:layout_gravity="bottom"

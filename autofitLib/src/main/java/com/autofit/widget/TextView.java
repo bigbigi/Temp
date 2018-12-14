@@ -125,7 +125,6 @@ public class TextView extends android.widget.TextView implements IAutoFit {
         if (ScreenParameter.isNeedSetFont && !mSelfTypeface) {
             newTf = ScreenParameter.getTypeFace(getContext().getApplicationContext());
         }
-        Log.d("big","newTf:"+newTf+",isFT:"+!ScreenParameter.isFT);
         if (!ScreenParameter.isFT && newTf != null) {
             super.setTypeface(newTf);
         } else {
