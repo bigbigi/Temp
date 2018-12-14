@@ -4,7 +4,9 @@ import android.content.Context;
 import android.net.Uri;
 import android.util.AttributeSet;
 import android.util.Log;
+import android.view.Display;
 import android.view.Gravity;
+import android.view.WindowManager;
 
 import com.autofit.widget.FrameLayout;
 import com.autofit.widget.SurfaceView;
@@ -43,10 +45,10 @@ public class VideoView extends FrameLayout implements IVLCVout.Callback {
         mLibVLC = new LibVLC(getContext(), options);
         try {
             mPlayer = new MediaPlayer(mLibVLC);
-            mPlayer.getVLCVout().setWindowSize(-1,-1);
             mPlayer.getVLCVout().addCallback(this);
             mPlayer.getVLCVout().setVideoSurface(mSurfaceView.getHolder().getSurface(), mSurfaceView.getHolder());
             mPlayer.getVLCVout().attachViews();
+            mPlayer.setScale(0);
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -83,7 +85,12 @@ public class VideoView extends FrameLayout implements IVLCVout.Callback {
     @Override
     public void onSurfacesCreated(IVLCVout vlcVout) {
         Log.d(TAG, "onSurfacesCreated：");
-        mPlayer.getVLCVout().setWindowSize(2048,1440);
+        WindowManager wm = (WindowManager) getContext().getSystemService(Context.WINDOW_SERVICE);
+        Display display = wm.getDefaultDisplay();
+        int dw = display.getWidth();
+        int dh = display.getHeight();
+        mPlayer.getVLCVout().setWindowSize(dw, dh);
+        mPlayer.setAspectRatio(dw + ":" + dh);
     }
 
     @Override
