@@ -32,13 +32,16 @@ public class Stick extends com.autofit.widget.FrameLayout {
     private float mLastX, mLastY;
     private ValueAnimator mResetAni = ValueAnimator.ofFloat(1.0f, 0f);
     private Drawable mLightDrawable;
+    private Drawable mNaviDrawable;
     private Matrix mMatrix = new Matrix();
-    private boolean isTouch = false;
+    private boolean mIsTouch = false;
 
     private void init() {
         mLightDrawable = getResources().getDrawable(R.drawable.ic_light);
+        mNaviDrawable = getResources().getDrawable(R.drawable.ic_fx);
         mPoint = new View(getContext());
         mPoint.setBackgroundResource(R.drawable.ic_f_light);
+        mPoint.setVisibility(View.INVISIBLE);
         FrameLayout.LayoutParams params = new FrameLayout.LayoutParams(mPointRadius * 2, mPointRadius * 2);
         params.gravity = Gravity.CENTER;
         addView(mPoint, params);
@@ -53,6 +56,54 @@ public class Stick extends com.autofit.widget.FrameLayout {
                 mPoint.setTranslationY(mLastY * value);
             }
         });
+    }
+
+    @Override
+    protected void onMeasure(int widthMeasureSpec, int heightMeasureSpec) {
+        super.onMeasure(widthMeasureSpec, heightMeasureSpec);
+        int naviWidth = ScreenParameter.getFitWidth(this, 193);
+        mNaviDrawable.setBounds((getWidth() - naviWidth) / 2, (getHeight() - naviWidth) / 2,
+                (getWidth() + naviWidth) / 2, (getHeight() + naviWidth) / 2);
+        mLightDrawable.setBounds(0, 0, getWidth(), getHeight());
+        mRadius = getWidth() / 2 - ScreenParameter.getFitWidth(this,5);
+    }
+
+    @Override
+    protected void onDraw(Canvas canvas) {
+        super.onDraw(canvas);
+        if (mIsTouch) {
+            canvas.save();
+            canvas.setMatrix(mMatrix);
+            mLightDrawable.draw(canvas);
+            canvas.restore();
+        } else {
+            mNaviDrawable.draw(canvas);
+        }
+    }
+
+    @Override
+    public boolean onTouchEvent(MotionEvent event) {
+        switch (event.getAction()) {
+            case MotionEvent.ACTION_DOWN:
+                mIsTouch = true;
+                mLastX = event.getX();
+                mLastY = event.getY();
+                calculate(mLastX, mLastY);
+                mPoint.setVisibility(View.VISIBLE);
+                return true;
+            case MotionEvent.ACTION_MOVE:
+                mLastX = event.getX();
+                mLastY = event.getY();
+                calculate(mLastX, mLastY);
+                break;
+            case MotionEvent.ACTION_UP:
+                mIsTouch = false;
+                mResetAni.start();
+                invalidate();
+                mPoint.setVisibility(View.INVISIBLE);
+                break;
+        }
+        return super.onTouchEvent(event);
     }
 
     private void calculate(float x, float y) {
@@ -82,41 +133,5 @@ public class Stick extends com.autofit.widget.FrameLayout {
         mLastY = dy;
         invalidate();
         Log.d("big", "degree:" + degree);
-    }
-
-    @Override
-    protected void onDraw(Canvas canvas) {
-        super.onDraw(canvas);
-        if (isTouch) {
-            canvas.save();
-            canvas.setMatrix(mMatrix);
-            mLightDrawable.draw(canvas);
-            canvas.restore();
-        }
-    }
-
-    @Override
-    public boolean onTouchEvent(MotionEvent event) {
-        switch (event.getAction()) {
-            case MotionEvent.ACTION_DOWN:
-                isTouch = true;
-                mLastX = event.getX();
-                mLastY = event.getY();
-                mRadius = getWidth() / 2;
-                mLightDrawable.setBounds(0, 0, getWidth(), getHeight());
-                calculate(mLastX, mLastY);
-                return true;
-            case MotionEvent.ACTION_MOVE:
-                mLastX = event.getX();
-                mLastY = event.getY();
-                calculate(mLastX, mLastY);
-                break;
-            case MotionEvent.ACTION_UP:
-                isTouch = false;
-                mResetAni.start();
-                invalidate();
-                break;
-        }
-        return super.onTouchEvent(event);
     }
 }

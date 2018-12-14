@@ -14,7 +14,6 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
-import com.autofit.widget.ScreenParameter;
 import com.autofit.widget.TextView;
 import com.reomote.carcontroller.widget.VideoView;
 
@@ -30,9 +29,10 @@ public class MainActivity extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        mPlayer = (VideoView) findViewById(R.id.player);
         mDelayText = (TextView) findViewById(R.id.netdelay);
         mSpeedText = (TextView) findViewById(R.id.netspeed);
-        mTitle= (TextView) findViewById(R.id.title);
+        mTitle = (TextView) findViewById(R.id.title);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
             mTitle.setLetterSpacing(0.1f);
         }
@@ -51,39 +51,9 @@ public class MainActivity extends Activity {
         int dw = display.getWidth();
         int dh = display.getHeight();
         Log.d("big", "screen:" + dw + "," + dh);
-        mPlayer = (VideoView) findViewById(R.id.player);
         mHandler.sendEmptyMessage(MSG_SPEED);
     }
 
-
-    private static final int MSG_SPEED = 1;
-    @SuppressLint("HandlerLeak")
-    private Handler mHandler = new Handler() {
-        @Override
-        public void handleMessage(Message msg) {
-            switch (msg.what) {
-                case MSG_SPEED:
-                    getSpeed();
-                    sendEmptyMessageDelayed(MSG_SPEED, 3000);
-                    break;
-            }
-        }
-    };
-    long mLastTotalBytes;
-    long mLastTimeStamp;
-
-    private void getSpeed() {
-        long nowTotalBytes = getTotalRxBytes();
-        long nowTimeStamp = System.currentTimeMillis();
-        long speed = (getTotalRxBytes() - mLastTotalBytes) * 1000 / (nowTimeStamp - mLastTimeStamp);
-        mLastTimeStamp = nowTimeStamp;
-        mLastTotalBytes = nowTotalBytes;
-        mSpeedText.setText(speed + "KB");
-    }
-
-    public long getTotalRxBytes() {
-        return TrafficStats.getUidRxBytes(Process.myUid()) == TrafficStats.UNSUPPORTED ? 0 : (TrafficStats.getTotalRxBytes() / 1024);//转为KB
-    }
 
     @Override
     protected void onResume() {
@@ -97,4 +67,34 @@ public class MainActivity extends Activity {
         mPlayer.pause();
     }
 
+    //------------------------getSpeed---------------------------
+    private long mLastTotalBytes;
+    private long mLastTimeStamp;
+    private static final int MSG_SPEED = 1;
+    @SuppressLint("HandlerLeak")
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_SPEED:
+                    getSpeed();
+                    sendEmptyMessageDelayed(MSG_SPEED, 3000);
+                    break;
+            }
+        }
+    };
+
+    private void getSpeed() {
+        long nowTotalBytes = getTotalRxBytes();
+        long nowTimeStamp = System.currentTimeMillis();
+        long speed = (getTotalRxBytes() - mLastTotalBytes) * 1000 / (nowTimeStamp - mLastTimeStamp);
+        mLastTimeStamp = nowTimeStamp;
+        mLastTotalBytes = nowTotalBytes;
+        mSpeedText.setText(speed + "KB");
+    }
+
+    public long getTotalRxBytes() {
+        return TrafficStats.getUidRxBytes(Process.myUid()) == TrafficStats.UNSUPPORTED ? 0 : (TrafficStats.getTotalRxBytes() / 1024);//转为KB
+    }
+    //------------------------getSpeed---------------------------
 }
