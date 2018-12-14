@@ -24,8 +24,10 @@ public final class ScreenParameter {
     private static float sDensity;
     private static int sWidth, sHeight;
     private static int sDensityDpi;
+    //    private static float sDefaultWidth = 1280.0f;
+//    private static float sDefaultHeight = 800.0f;
     private static float sDefaultWidth = 1280.0f;
-    private static float sDefaultHeight = 800.0f;
+    private static float sDefaultHeight = 720.0f;
     private static float sRatioX = 0;
     private static float sRatioY = 0;
     private static float sRadtio;
@@ -349,7 +351,6 @@ public final class ScreenParameter {
                 if (sTypeFace == null) {
                     try {
                         sTypeFace = Typeface.createFromAsset(ctx.getAssets(), "fonts/fzlth.ttf");
-//                        sTypeFace = Typeface.createFromAsset(ctx.getAssets(), "fonts/akkurat.ttf");
                     } catch (Exception e) {
                         e.printStackTrace();
                     }

@@ -5,6 +5,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.graphics.Typeface;
 import android.net.TrafficStats;
+import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.Message;
@@ -13,14 +14,17 @@ import android.util.Log;
 import android.view.Display;
 import android.view.WindowManager;
 
+import com.autofit.widget.ScreenParameter;
 import com.autofit.widget.TextView;
 import com.reomote.carcontroller.widget.VideoView;
 
 
 public class MainActivity extends Activity {
     VideoView mPlayer;
+    private TextView mTitle;
     private TextView mDelayText;
     private TextView mSpeedText;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,6 +32,10 @@ public class MainActivity extends Activity {
         setContentView(R.layout.activity_main);
         mDelayText = (TextView) findViewById(R.id.netdelay);
         mSpeedText = (TextView) findViewById(R.id.netspeed);
+        mTitle= (TextView) findViewById(R.id.title);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+            mTitle.setLetterSpacing(0.1f);
+        }
         Typeface speedTypeFace = null;
         try {
             speedTypeFace = Typeface.createFromAsset(getAssets(), "fonts/akkurat.ttf");
@@ -70,7 +78,7 @@ public class MainActivity extends Activity {
         long speed = (getTotalRxBytes() - mLastTotalBytes) * 1000 / (nowTimeStamp - mLastTimeStamp);
         mLastTimeStamp = nowTimeStamp;
         mLastTotalBytes = nowTotalBytes;
-        mSpeedText.setText(speed + "KB/S");
+        mSpeedText.setText(speed + "KB");
     }
 
     public long getTotalRxBytes() {

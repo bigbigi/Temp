@@ -9,7 +9,7 @@
     <com.reomote.carcontroller.widget.VideoView
         android:id="@+id/player"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
     <View
         android:layout_width="match_parent"
@@ -17,6 +17,7 @@
         android:background="@drawable/bg1" />
 
     <com.autofit.widget.TextView
+        android:id="@+id/title"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center_horizontal"
@@ -36,22 +37,26 @@
 
         <com.autofit.widget.TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:paddingBottom="5px"
+            android:layout_marginBottom="0px"
             android:layout_marginLeft="34px"
-            android:text="速率"
+            android:text="时延"
             android:textColor="#e3ffff"
             android:textSize="19px" />
 
         <com.autofit.widget.TextView
             android:id="@+id/netdelay"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10px"
-            android:text="42KB/S"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:paddingBottom="0px"
+            android:layout_marginLeft="14px"
+            android:text="42KB"
+            android:textStyle="italic"
             android:textColor="#e3ffff"
-            android:textSize="28px"
+            android:textSize="26px"
             app:self_typeface="true" />
     </com.autofit.widget.LinearLayout>
 
@@ -66,8 +71,9 @@
 
         <com.autofit.widget.TextView
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:paddingBottom="5px"
             android:layout_marginLeft="34px"
             android:text="速率"
             android:textColor="#e3ffff"
@@ -76,15 +82,15 @@
         <com.autofit.widget.TextView
             android:id="@+id/netspeed"
             android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="center_vertical"
-            android:layout_marginLeft="10px"
-            android:text="42KB/S"
+            android:layout_height="match_parent"
+            android:gravity="bottom"
+            android:paddingBottom="0px"
+            android:layout_marginLeft="14px"
+            android:text="42KB"
             android:textColor="#e3ffff"
-            android:textSize="28px"
+            android:textSize="26px"
             app:self_typeface="true" />
     </com.autofit.widget.LinearLayout>
-
 
     <com.reomote.carcontroller.widget.Stick
         android:layout_width="192px"
