@@ -94,7 +94,7 @@ public class MainActivity extends Activity implements Stick.Callback {
         long speed = (getTotalRxBytes() - mLastTotalBytes) * 1000 / (nowTimeStamp - mLastTimeStamp);
         mLastTimeStamp = nowTimeStamp;
         mLastTotalBytes = nowTotalBytes;
-        mSpeedText.setText(speed + "KB");
+        mSpeedText.setText(String.format("%.2f Mbp", (float) speed * 8 / 1000));
     }
 
     public long getTotalRxBytes() {
