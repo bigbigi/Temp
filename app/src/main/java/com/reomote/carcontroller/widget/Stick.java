@@ -27,7 +27,7 @@ public class Stick extends com.autofit.widget.FrameLayout {
     }
 
     public interface Callback {
-        void onCallback(float degree, float ratioX, float ratioY);
+        void onCallback(float degree, float ratio);
     }
 
     private View mPoint;
@@ -144,8 +144,22 @@ public class Stick extends com.autofit.widget.FrameLayout {
         mLastY = dy;
         invalidate();
         if (mCallback != null) {
-            mCallback.onCallback(degree, dx / dr, dy / dr);
+            float radio = dy < 0 ? -dr / (mRadius - mPointRadius) : dr / (mRadius - mPointRadius);
+            mCallback.onCallback(-getRealDegree(degree), radio);
         }
+    }
+
+    private float getRealDegree(float degree) {
+        if (degree < 90) {
+            degree = degree - 90;
+        } else if (degree < 180) {
+            degree = degree - 90;
+        } else if (degree < 270) {
+            degree = 270 - degree;
+        } else {
+            degree = 270 - degree;
+        }
+        return degree;
     }
 
     public void setCallback(Callback callback) {

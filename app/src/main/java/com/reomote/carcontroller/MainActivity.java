@@ -2,7 +2,6 @@ package com.reomote.carcontroller;
 
 import android.annotation.SuppressLint;
 import android.app.Activity;
-import android.content.Context;
 import android.graphics.Typeface;
 import android.net.TrafficStats;
 import android.os.Build;
@@ -11,10 +10,10 @@ import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
 import android.util.Log;
-import android.view.Display;
-import android.view.WindowManager;
 
 import com.autofit.widget.TextView;
+import com.reomote.carcontroller.utils.Connector;
+import com.reomote.carcontroller.utils.ThreadManager;
 import com.reomote.carcontroller.utils.TracerouteWithPing;
 import com.reomote.carcontroller.widget.Stick;
 import com.reomote.carcontroller.widget.VideoView;
@@ -146,8 +145,65 @@ public class MainActivity extends Activity implements Stick.Callback,
     }
 
     //------------------------getDelay---------------------------
+    private Connector mConnector;
+
     @Override
-    public void onCallback(float degree, float ratioX, float ratioY) {
-        Log.d("big", "degree:" + degree + ",ratioX:" + ratioX + ",ratioY:" + ratioY);
+    public void onCallback(final float degree, final float ratio) {
+        ThreadManager.single(new Runnable() {
+            @Override
+            public void run() {
+                if (mConnector == null) {
+                    mConnector = new Connector();
+                }
+                int speedInt = (int) (400 * -ratio) + 100 * (int) (-ratio / Math.abs(ratio));//100~500
+                String data = null;
+                if (Math.abs(degree) > 80) {
+                    if (degree < 0) {
+                        speedInt = Math.abs(speedInt);
+                    } else {
+                        speedInt = -Math.abs(speedInt);
+                    }
+                    int sumInt = (0xFA + 0xAA + 0x01 + 0x02 + (speedInt >> 8 & 0x00ff) + (speedInt & 0x00ff)) & 0x00ff;
+                    String speed = String.format("%x", toSign(speedInt, 0xffff)).toUpperCase();
+                    String sum = String.format("%x", sumInt).toUpperCase();
+                    speed = addZero(speed, 4);
+                    sum = addZero(sum, 2);
+                    data = "FAAA0102" + speed + sum;
+                    Log.d("big", "speedInt:" + speedInt);
+                    Log.d("big", "speed:" + speed + "，sum:" + sum);
+                } else {
+                    int angleInt = (int) degree;
+                    if (Math.abs(degree) > 30) {
+                        angleInt = (int) (30 * degree / Math.abs(degree));
+                    }
+                    int sumInt = (0xFA + 0xAA + 0x00 + 0x03 + angleInt + (speedInt >> 8 & 0x00ff) + (speedInt & 0x00ff)) & 0x00ff;
+                    String angle = String.format("%x", toSign(angleInt, 0xff)).toUpperCase();
+                    String speed = String.format("%x", toSign(speedInt, 0xffff)).toUpperCase();
+                    String sum = String.format("%x", sumInt).toUpperCase();
+                    angle = addZero(angle, 2);
+                    speed = addZero(speed, 4);
+                    sum = addZero(sum, 2);
+                    data = "FAAA0003" + angle + speed + sum;
+                    Log.d("big", "angleInt:" + angleInt + "，speedInt:" + speedInt);
+                    Log.d("big", "angle:" + angle + ",speed:" + speed + ",sum:" + sum + ",ratio：" + speedInt);
+                }
+                mConnector.send(data);//FAAA00031E008D52
+
+            }
+        });
+    }
+
+    private int toSign(int value, int format) {
+        if (value < 0) {
+            return ((~Math.abs(value)) & format) + 1;
+        }
+        return value;
+    }
+
+    private String addZero(String s, int length) {
+        while (s.length() < length) {
+            s = "0" + s;
+        }
+        return s;
     }
 }
