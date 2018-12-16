@@ -88,6 +88,11 @@ public class MainActivity extends Activity implements Stick.Callback,
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
+                } else {
+                    mCameraIp = DEFAULT_CAMERA_IP;
+                    mCarIp = DEFAULT_CAR_IP;
+                    mPORT = DEFAULT_PORT;
+                    mPlayer.setVideoPath(String.format(PATH, mCameraIp));
                 }
             }
         });
