@@ -1,2 +1,2 @@
-include ':app',':autofitLib','libvlc-android'
+include ':app',':autofitLib','libvlc-android','setting'
 //include 'libVlc'

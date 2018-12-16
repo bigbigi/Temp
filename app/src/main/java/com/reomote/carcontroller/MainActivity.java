@@ -6,23 +6,31 @@ import android.graphics.Typeface;
 import android.net.TrafficStats;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.os.Message;
 import android.os.Process;
+import android.text.TextUtils;
 import android.util.Log;
 
 import com.autofit.widget.TextView;
 import com.reomote.carcontroller.utils.Connector;
+import com.reomote.carcontroller.utils.FileUtils;
 import com.reomote.carcontroller.utils.ThreadManager;
 import com.reomote.carcontroller.utils.TracerouteWithPing;
 import com.reomote.carcontroller.widget.Stick;
 import com.reomote.carcontroller.widget.VideoView;
 
+import org.json.JSONException;
+import org.json.JSONObject;
+
 
 public class MainActivity extends Activity implements Stick.Callback,
         TracerouteWithPing.OnTraceRouteListener {
-    private static final String IP = "10.2.0.76";
-    private static final String PATH = "rtsp://13728735758:abcd1234@10.2.0.76:554/stream1";
+    private static final String DEFAULT_CAMERA_IP = "10.2.0.76";
+    private static final String DEFAULT_CAR_IP = "10.2.0.186";//服务器端ip地址
+    private static final int DEFAULT_PORT = 20108;//端口号
+    private static final String PATH = "rtsp://13728735758:abcd1234@%s:554/stream1";
     private static final int DURATION = 3000;
 
     private VideoView mPlayer;
@@ -31,6 +39,9 @@ public class MainActivity extends Activity implements Stick.Callback,
     private TextView mDelayText;
     private TextView mSpeedText;
     private Stick mStick;
+    private String mCameraIp = null;
+    private String mCarIp = null;
+    private int mPORT;
 
 
     @Override
@@ -60,13 +71,35 @@ public class MainActivity extends Activity implements Stick.Callback,
         mTraceroute.setOnTraceRouteListener(this);
         mHandler.sendEmptyMessage(MSG_SPEED);
         mHandler.sendEmptyMessage(MSG_PING);
+        ThreadManager.single(new Runnable() {
+            @Override
+            public void run() {
+                String dir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/carController/";
+                String path = dir + "config.text";
+                String ret = FileUtils.read(path);
+                if (!TextUtils.isEmpty(ret)) {
+                    try {
+                        JSONObject object = new JSONObject(ret);
+                        mCameraIp = object.optString("camera", DEFAULT_CAMERA_IP).trim();
+                        mCarIp = object.optString("car", DEFAULT_CAR_IP).trim();
+                        mPORT = object.optInt("port", DEFAULT_PORT);
+                        mPlayer.setVideoPath(String.format(PATH, mCameraIp));
+                        Log.d("big", "camera:" + mCameraIp + ",car:" + mCarIp + ",port:" + mPORT);
+                    } catch (JSONException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+        });
     }
 
 
     @Override
     protected void onResume() {
         super.onResume();
-        mPlayer.setVideoPath(PATH);
+        if (!TextUtils.isEmpty(mCameraIp)) {
+            mPlayer.setVideoPath(String.format(PATH, mCameraIp));
+        }
     }
 
     @Override
@@ -105,7 +138,7 @@ public class MainActivity extends Activity implements Stick.Callback,
                     }
                     break;
                 case MSG_PING:
-                    mTraceroute.executeTraceroute(IP, 0);
+                    mTraceroute.executeTraceroute(mCameraIp, 0);
                     break;
             }
         }
@@ -153,7 +186,7 @@ public class MainActivity extends Activity implements Stick.Callback,
             @Override
             public void run() {
                 if (mConnector == null) {
-                    mConnector = new Connector();
+                    mConnector = new Connector(mCarIp, mPORT);
                 }
                 int speedInt = (int) (400 * -ratio) + 100 * (int) (-ratio / Math.abs(ratio));//100~500
                 String data = null;

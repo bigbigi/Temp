@@ -14,14 +14,12 @@ import java.net.Socket;
 
 public class Connector {
     private static final String TAG = "Connector";//服务器端ip地址
-    private static final String IP = "10.2.0.186";//服务器端ip地址
-//    private static final String IP = "10.2.0.199";//服务器端ip地址
-    private static final int PORT = 20108;//端口号
+
     private Socket mSocket;
 
-    public Connector() {
+    public Connector(String ip,int port) {
         try {
-            mSocket = new Socket(IP, PORT);
+            mSocket = new Socket(ip, port);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -38,11 +36,11 @@ public class Connector {
         }
     }
 
-    public static void receive() {
+    public static void receive(int port) {
         Socket socket = null;
         DataInputStream dis = null;
         try {
-            ServerSocket serverSocket = new ServerSocket(PORT);
+            ServerSocket serverSocket = new ServerSocket(port);
             socket = serverSocket.accept();
             dis = new DataInputStream(socket.getInputStream());
             byte[] body = new byte[1];

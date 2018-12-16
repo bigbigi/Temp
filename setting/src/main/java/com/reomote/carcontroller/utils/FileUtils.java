@@ -70,6 +70,7 @@ public class FileUtils {
         }
         return buffer;
     }
+
     public static boolean write(String path, String data) {
         boolean success = false;
         FileOutputStream fos = null;
@@ -104,4 +105,5 @@ public class FileUtils {
         }
         return sb.toString();
     }
+
 }
