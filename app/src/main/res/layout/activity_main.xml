@@ -54,7 +54,6 @@
             android:paddingBottom="0px"
             android:layout_marginLeft="14px"
             android:text="0 MS"
-            android:textStyle="italic"
             android:textColor="#e3ffff"
             android:textSize="26px"
             app:self_typeface="true" />
