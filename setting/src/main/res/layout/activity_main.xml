@@ -31,7 +31,6 @@
             android:layout_marginTop="10px"
             android:background="#fff"
             android:digits="0123456789."
-            android:inputType="number"
             android:paddingLeft="10px"
             android:textColor="#000"
             android:textSize="30px" />
@@ -61,7 +60,6 @@
             android:layout_marginTop="10px"
             android:background="#fff"
             android:digits="0123456789."
-            android:inputType="number"
             android:paddingLeft="10px"
             android:textColor="#000"
             android:textSize="30px" />
@@ -91,7 +89,6 @@
             android:layout_marginTop="10px"
             android:background="#fff"
             android:digits="0123456789."
-            android:inputType="number"
             android:paddingLeft="10px"
             android:textColor="#000"
             android:textSize="30px" />

@@ -174,12 +174,12 @@ public class MainActivity extends Activity implements Stick.Callback,
 
     @Override
     public void onTimeout(int what) {
-
+        onResult(0,200,0);
     }
 
     @Override
     public void onException(int what) {
-
+        onResult(0,200,0);
     }
 
     //------------------------getDelay---------------------------

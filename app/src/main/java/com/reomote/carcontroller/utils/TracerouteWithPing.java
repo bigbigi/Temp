@@ -176,7 +176,7 @@ public class TracerouteWithPing {
             if (hasConnectivity()) {
                 try {
                     res = launchPing(urlToPing);
-                    Log.d(TAG, "res-->" + res);
+                   // Log.d(TAG, "res-->" + res);
                     int loss = parseLossFromPing(res);
                     int delay = parseAverTimeFromPing(res);
                     // TracerouteContainer trace;
