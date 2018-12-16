@@ -58,6 +58,7 @@ public class VideoView extends FrameLayout implements IVLCVout.Callback {
         if (mPlayer == null) {
             init();
         }
+        Log.d(TAG, "path:" + path);
         mPlayer.setMedia(new Media(mLibVLC, Uri.parse(path)));
         play();
     }

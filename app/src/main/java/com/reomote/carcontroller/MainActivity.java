@@ -30,7 +30,8 @@ public class MainActivity extends Activity implements Stick.Callback,
     private static final String DEFAULT_CAMERA_IP = "10.2.0.76";
     private static final String DEFAULT_CAR_IP = "10.2.0.186";//服务器端ip地址
     private static final int DEFAULT_PORT = 20108;//端口号
-    private static final String PATH = "rtsp://13728735758:abcd1234@%s:554/stream1";
+    private static final int DEFAULT_CAMERA_PORT = 554;//端口号
+    private static final String PATH = "rtsp://13728735758:abcd1234@%s:%d/stream1";
     private static final int DURATION = 3000;
 
     private VideoView mPlayer;
@@ -42,6 +43,7 @@ public class MainActivity extends Activity implements Stick.Callback,
     private String mCameraIp = null;
     private String mCarIp = null;
     private int mPORT;
+    private int mCameraPort;
 
 
     @Override
@@ -83,8 +85,9 @@ public class MainActivity extends Activity implements Stick.Callback,
                         mCameraIp = object.optString("camera", DEFAULT_CAMERA_IP).trim();
                         mCarIp = object.optString("car", DEFAULT_CAR_IP).trim();
                         mPORT = object.optInt("port", DEFAULT_PORT);
-                        mPlayer.setVideoPath(String.format(PATH, mCameraIp));
-                        Log.d("big", "camera:" + mCameraIp + ",car:" + mCarIp + ",port:" + mPORT);
+                        mCameraPort = object.optInt("cameraPort", DEFAULT_CAMERA_PORT);
+                        mPlayer.setVideoPath(String.format(PATH, mCameraIp, mCameraPort));
+                        Log.d("big", "camera:" + mCameraIp + ",car:" + mCarIp + ",port:" + mPORT+",cameraPort:"+mCameraPort);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -92,7 +95,7 @@ public class MainActivity extends Activity implements Stick.Callback,
                     mCameraIp = DEFAULT_CAMERA_IP;
                     mCarIp = DEFAULT_CAR_IP;
                     mPORT = DEFAULT_PORT;
-                    mPlayer.setVideoPath(String.format(PATH, mCameraIp));
+                    mPlayer.setVideoPath(String.format(PATH, mCameraIp, mCameraPort));
                 }
             }
         });
@@ -103,7 +106,7 @@ public class MainActivity extends Activity implements Stick.Callback,
     protected void onResume() {
         super.onResume();
         if (!TextUtils.isEmpty(mCameraIp)) {
-            mPlayer.setVideoPath(String.format(PATH, mCameraIp));
+            mPlayer.setVideoPath(String.format(PATH, mCameraIp, mCameraPort));
         }
     }
 
@@ -174,12 +177,12 @@ public class MainActivity extends Activity implements Stick.Callback,
 
     @Override
     public void onTimeout(int what) {
-        onResult(0,200,0);
+        onResult(0, 200, 0);
     }
 
     @Override
     public void onException(int what) {
-        onResult(0,200,0);
+        onResult(0, 200, 0);
     }
 
     //------------------------getDelay---------------------------

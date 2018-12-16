@@ -18,12 +18,10 @@ import org.json.JSONObject;
 
 
 public class SettingActivity extends Activity {
-    private static final String IP = "10.2.0.76";
-    private static final String PATH = "rtsp://13728735758:abcd1234@10.2.0.76:554/stream1";
-    private static final int DURATION = 3000;
     private String mDir;
     private String mPath;
     private EditText mCamera;
+    private EditText mCameraPort;
     private EditText mCar;
     private EditText mPort;
 
@@ -35,6 +33,7 @@ public class SettingActivity extends Activity {
         mCamera = (EditText) findViewById(R.id.camera_ip);
         mCar = (EditText) findViewById(R.id.car_ip);
         mPort = (EditText) findViewById(R.id.port);
+        mCameraPort = (EditText) findViewById(R.id.camera_port);
 
         mDir = Environment.getExternalStorageDirectory().getAbsolutePath() + "/carController/";
         mPath = mDir + "config.text";
@@ -62,6 +61,7 @@ public class SettingActivity extends Activity {
                                 mCamera.setText(obj.optString("camera"));
                                 mCar.setText(obj.optString("car"));
                                 mPort.setText(obj.optString("port"));
+                                mCameraPort.setText(obj.optString("cameraPort"));
 
                             } catch (JSONException e) {
                                 e.printStackTrace();
@@ -86,6 +86,9 @@ public class SettingActivity extends Activity {
                     object.put("car", String.valueOf(car.getText()));
                     if (!TextUtils.isEmpty(port.getText())) {
                         object.put("port", Utils.parseInt(String.valueOf(port.getText())));
+                    }
+                    if (!TextUtils.isEmpty(mCameraPort.getText())) {
+                        object.put("cameraPort", Utils.parseInt(String.valueOf(mCameraPort.getText())));
                     }
                 } catch (JSONException e) {
                     e.printStackTrace();
