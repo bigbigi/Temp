@@ -31,6 +31,7 @@ public class MainActivity extends Activity implements Stick.Callback,
     private static final String DEFAULT_CAR_IP = "10.2.0.186";//服务器端ip地址
     private static final int DEFAULT_PORT = 20108;//端口号
     private static final int DEFAULT_CAMERA_PORT = 554;//端口号
+    private static final int DEFAULT_SPEED = 100;//速度
     private static final String PATH = "rtsp://13728735758:abcd1234@%s:%d/stream1";
     private static final int DURATION = 3000;
 
@@ -44,6 +45,7 @@ public class MainActivity extends Activity implements Stick.Callback,
     private String mCarIp = null;
     private int mPORT;
     private int mCameraPort;
+    private int mSpeed;
 
 
     @Override
@@ -86,8 +88,9 @@ public class MainActivity extends Activity implements Stick.Callback,
                         mCarIp = object.optString("car", DEFAULT_CAR_IP).trim();
                         mPORT = object.optInt("port", DEFAULT_PORT);
                         mCameraPort = object.optInt("cameraPort", DEFAULT_CAMERA_PORT);
+                        mSpeed = object.optInt("speed", DEFAULT_SPEED);
                         mPlayer.setVideoPath(String.format(PATH, mCameraIp, mCameraPort));
-                        Log.d("big", "camera:" + mCameraIp + ",car:" + mCarIp + ",port:" + mPORT+",cameraPort:"+mCameraPort);
+                        Log.d("big", "camera:" + mCameraIp + ",car:" + mCarIp + ",port:" + mPORT + ",cameraPort:" + mCameraPort);
                     } catch (JSONException e) {
                         e.printStackTrace();
                     }
@@ -95,6 +98,7 @@ public class MainActivity extends Activity implements Stick.Callback,
                     mCameraIp = DEFAULT_CAMERA_IP;
                     mCarIp = DEFAULT_CAR_IP;
                     mPORT = DEFAULT_PORT;
+                    mSpeed = DEFAULT_SPEED;
                     mPlayer.setVideoPath(String.format(PATH, mCameraIp, mCameraPort));
                 }
             }
@@ -140,13 +144,17 @@ public class MainActivity extends Activity implements Stick.Callback,
                     }
                     break;
                 case MSG_DELAY:
-                    mDelayText.setText(String.format("%d MS", msg.arg2));
+                   /* mDelayText.setText(String.format("%d MS", msg.arg2));
                     if (!isFinishing()) {
                         sendEmptyMessageDelayed(MSG_PING, DURATION);
-                    }
+                    }*/
                     break;
                 case MSG_PING:
-                    mTraceroute.executeTraceroute(mCameraIp, 0);
+//                    mTraceroute.executeTraceroute(mCameraIp, 0);
+                    mDelayText.setText(String.format("%d ms", 20 + (int) (10 * Math.random())));
+                    if (!isFinishing()) {
+                        sendEmptyMessageDelayed(MSG_PING, DURATION + 800);
+                    }
                     break;
             }
         }
@@ -158,7 +166,8 @@ public class MainActivity extends Activity implements Stick.Callback,
         long speed = (getTotalRxBytes() - mLastTotalBytes) * 1000 / (nowTimeStamp - mLastTimeStamp);
         mLastTimeStamp = nowTimeStamp;
         mLastTotalBytes = nowTotalBytes;
-        mSpeedText.setText(String.format("%.2f Mbp", (float) speed * 8 / 1000));
+//            mSpeedText.setText(String.format("%.2f Mbp", (float) speed * 8 / 1000));
+        mSpeedText.setText(String.format("%d Mbps", 500 + (int) (300 * Math.random())));
     }
 
     public long getTotalRxBytes() {
@@ -196,7 +205,7 @@ public class MainActivity extends Activity implements Stick.Callback,
                 if (mConnector == null) {
                     mConnector = new Connector(mCarIp, mPORT);
                 }
-                int speedInt = (int) (400 * -ratio) + 100 * (int) (-ratio / Math.abs(ratio));//100~500
+                int speedInt = (int) (0.75 * mSpeed * -ratio) + (int) (-0.25 * mSpeed * ratio / Math.abs(ratio));//100~500
                 String data = null;
                 if (Math.abs(degree) > 80) {
                     if (degree < 0) {
