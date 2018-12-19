@@ -1,7 +1,9 @@
 package com.reomote.carcontroller.utils;
 
+import android.content.Context;
 import android.text.TextUtils;
 import android.util.Log;
+import android.widget.Toast;
 
 import java.io.DataInputStream;
 import java.io.IOException;
@@ -14,26 +16,61 @@ import java.net.Socket;
 
 public class Connector {
     private static final String TAG = "Connector";//服务器端ip地址
+    private String mIp;
+    private int mPort;
+    private Context mContext;
 
     private Socket mSocket;
 
-    public Connector(String ip,int port) {
-        try {
-            mSocket = new Socket(ip, port);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+    public Connector(Context context, String ip, int port) {
+        mContext = context;
+        mIp = ip;
+        mPort = port;
+        createSocket();
     }
 
     public void send(String data) {
         try {
-            Log.d(TAG, "send:" + data);
+            Log.d(TAG, "send:" + data + ",connect:" + mSocket.isConnected() + "ip:" + mIp + ",prot:" + mPort);
             mSocket.getOutputStream().write(hexStrToBinaryStr(data));
             mSocket.getOutputStream().write(hexStrToBinaryStr(data));
         } catch (Exception e) {
             Log.d(TAG, "send Exception:" + data);
+            close();
+            ThreadManager.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(mContext, "断开连接", Toast.LENGTH_LONG).show();
+                }
+            });
+            createSocket();
             e.printStackTrace();
         }
+    }
+
+    private void createSocket() {
+        while (mSocket == null || mSocket.isClosed()) {
+            try {
+                mSocket = new Socket(mIp, mPort);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        ThreadManager.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                Toast.makeText(mContext, "已连上小车", Toast.LENGTH_LONG).show();
+            }
+        });
+    }
+
+    public boolean isConnect() {
+        return mSocket != null && !mSocket.isClosed();
     }
 
     public static void receive(int port) {
@@ -41,11 +78,13 @@ public class Connector {
         DataInputStream dis = null;
         try {
             ServerSocket serverSocket = new ServerSocket(port);
-            socket = serverSocket.accept();
-            dis = new DataInputStream(socket.getInputStream());
-            byte[] body = new byte[1];
-            while (dis.read(body) > 0) {
-                Log.d(TAG, "message:" + Integer.toHexString(body[0]));
+            while (true) {
+                socket = serverSocket.accept();
+                dis = new DataInputStream(socket.getInputStream());
+                byte[] body = new byte[1];
+                while (dis.read(body) > 0) {
+                    Log.d(TAG, "message:" + Integer.toHexString(body[0]));
+                }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -59,7 +98,7 @@ public class Connector {
                 }
             }
         }
-
+        Log.e(TAG, "receive close");
     }
 
     public void close() {

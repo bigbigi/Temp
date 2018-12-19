@@ -28,7 +28,7 @@ import org.json.JSONObject;
 public class MainActivity extends Activity implements Stick.Callback,
         TracerouteWithPing.OnTraceRouteListener {
     private static final String DEFAULT_CAMERA_IP = "10.2.0.76";
-    private static final String DEFAULT_CAR_IP = "10.2.0.186";//服务器端ip地址
+    private static final String DEFAULT_CAR_IP = "10.2.0.199";//服务器端ip地址
     private static final int DEFAULT_PORT = 20108;//端口号
     private static final int DEFAULT_CAMERA_PORT = 554;//端口号
     private static final int DEFAULT_SPEED = 100;//速度
@@ -101,8 +101,10 @@ public class MainActivity extends Activity implements Stick.Callback,
                     mSpeed = DEFAULT_SPEED;
                     mPlayer.setVideoPath(String.format(PATH, mCameraIp, mCameraPort));
                 }
+                mConnector = new Connector(MainActivity.this, mCarIp, mPORT);
             }
         });
+
     }
 
 
@@ -123,6 +125,9 @@ public class MainActivity extends Activity implements Stick.Callback,
     @Override
     public void finish() {
         super.finish();
+        if (mConnector != null) {
+            mConnector.close();
+        }
         mHandler.removeCallbacksAndMessages(null);
     }
 
@@ -199,12 +204,10 @@ public class MainActivity extends Activity implements Stick.Callback,
 
     @Override
     public void onCallback(final float degree, final float ratio) {
+        if (mConnector == null || !mConnector.isConnect()) return;
         ThreadManager.single(new Runnable() {
             @Override
             public void run() {
-                if (mConnector == null) {
-                    mConnector = new Connector(mCarIp, mPORT);
-                }
                 int speedInt = (int) (0.75 * mSpeed * -ratio) + (int) (-0.25 * mSpeed * ratio / Math.abs(ratio));//100~500
                 String data = null;
                 if (Math.abs(degree) > 80) {
