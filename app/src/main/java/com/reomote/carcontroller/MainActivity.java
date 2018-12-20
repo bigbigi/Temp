@@ -18,6 +18,7 @@ import com.reomote.carcontroller.utils.Connector;
 import com.reomote.carcontroller.utils.FileUtils;
 import com.reomote.carcontroller.utils.ThreadManager;
 import com.reomote.carcontroller.utils.TracerouteWithPing;
+import com.reomote.carcontroller.utils.UdpConnector;
 import com.reomote.carcontroller.widget.Stick;
 import com.reomote.carcontroller.widget.VideoView;
 
@@ -101,9 +102,18 @@ public class MainActivity extends Activity implements Stick.Callback,
                     mSpeed = DEFAULT_SPEED;
                     mPlayer.setVideoPath(String.format(PATH, mCameraIp, mCameraPort));
                 }
-                mConnector = new Connector(MainActivity.this, mCarIp, mPORT);
+                mConnector = new UdpConnector(MainActivity.this, mCarIp, mPORT);
+
+
+//                new Thread() {
+//                    @Override
+//                    public void run() {
+//                        UdpConnector.receive(mPORT);
+//                    }
+//                }.start();
             }
         });
+
 
     }
 
@@ -200,11 +210,11 @@ public class MainActivity extends Activity implements Stick.Callback,
     }
 
     //------------------------getDelay---------------------------
-    private Connector mConnector;
+    private UdpConnector mConnector;
 
     @Override
     public void onCallback(final float degree, final float ratio) {
-        if (mConnector == null || !mConnector.isConnect()) return;
+        if (mConnector == null) return;
         ThreadManager.single(new Runnable() {
             @Override
             public void run() {
