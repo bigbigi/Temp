@@ -102,6 +102,7 @@ public class MainActivity extends Activity implements Stick.Callback,
                     mSpeed = DEFAULT_SPEED;
                     mPlayer.setVideoPath(String.format(PATH, mCameraIp, mCameraPort));
                 }
+//                mPlayer.setVideoPath("http://tb-video.bdstatic.com/tieba-smallvideo-transcode/216538484_3ca669d6ec2ce13afec765e489209307_0.mp4");
                 mConnector = new UdpConnector(MainActivity.this, mCarIp, mPORT);
 
 
@@ -138,6 +139,7 @@ public class MainActivity extends Activity implements Stick.Callback,
         if (mConnector != null) {
             mConnector.close();
         }
+        mPlayer.release();
         mHandler.removeCallbacksAndMessages(null);
     }
 

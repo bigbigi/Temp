@@ -86,7 +86,9 @@ public class UdpConnector {
     }
 
     public void close() {
-        mSocket.close();
+        if (mSocket != null) {
+            mSocket.close();
+        }
     }
 
     /**

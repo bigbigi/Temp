@@ -2,6 +2,8 @@ package com.reomote.carcontroller.widget;
 
 import android.content.Context;
 import android.net.Uri;
+import android.os.Handler;
+import android.os.Message;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.Display;
@@ -22,7 +24,7 @@ import java.util.ArrayList;
  * Created by big on 2018/12/14.
  */
 
-public class VideoView extends FrameLayout implements IVLCVout.Callback {
+public class VideoView extends FrameLayout implements IVLCVout.Callback, MediaPlayer.EventListener {
     private final static String TAG = "VideoView";
     private MediaPlayer mPlayer = null;
     private LibVLC mLibVLC;
@@ -48,6 +50,7 @@ public class VideoView extends FrameLayout implements IVLCVout.Callback {
             mPlayer.getVLCVout().addCallback(this);
             mPlayer.getVLCVout().setVideoSurface(mSurfaceView.getHolder().getSurface(), mSurfaceView.getHolder());
             mPlayer.getVLCVout().attachViews();
+            mPlayer.setEventListener(this);
             mPlayer.setScale(0);
         } catch (Exception e) {
             e.printStackTrace();
@@ -59,6 +62,7 @@ public class VideoView extends FrameLayout implements IVLCVout.Callback {
             init();
         }
         Log.d(TAG, "path:" + path);
+        mPath = path;
         mPlayer.setMedia(new Media(mLibVLC, Uri.parse(path)));
         play();
     }
@@ -83,6 +87,11 @@ public class VideoView extends FrameLayout implements IVLCVout.Callback {
         mPlayer = null;
     }
 
+    public void release() {
+        mPlayer.setEventListener(null);
+        mHandler.removeCallbacksAndMessages(null);
+    }
+
     @Override
     public void onSurfacesCreated(IVLCVout vlcVout) {
         Log.d(TAG, "onSurfacesCreated：");
@@ -98,5 +107,37 @@ public class VideoView extends FrameLayout implements IVLCVout.Callback {
     public void onSurfacesDestroyed(IVLCVout vlcVout) {
         Log.d(TAG, "onSurfacesDestroyed：");
         stop();
+    }
+
+    private String mPath;
+    private boolean mIsPlaying = false;
+    private static final int MSG_RETRY = 1;
+    private static final int DURATION = 5000;
+    private Handler mHandler = new Handler() {
+        @Override
+        public void handleMessage(Message msg) {
+            switch (msg.what) {
+                case MSG_RETRY:
+                    if (!mIsPlaying) {
+                        setVideoPath(mPath);
+                        sendEmptyMessageDelayed(MSG_RETRY, DURATION);
+                    }
+                    break;
+            }
+        }
+    };
+
+    @Override
+    public void onEvent(MediaPlayer.Event event) {
+        Log.d(TAG, "onEvent:" + event.type);
+        switch (event.type) {
+            case MediaPlayer.Event.Playing://260
+                mIsPlaying = true;
+                break;
+            case MediaPlayer.Event.Stopped://262
+                mIsPlaying = false;
+                mHandler.sendEmptyMessageDelayed(MSG_RETRY, DURATION);
+                break;
+        }
     }
 }
