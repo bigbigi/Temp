@@ -112,7 +112,7 @@ public class VideoView extends FrameLayout implements IVLCVout.Callback, MediaPl
     private String mPath;
     private boolean mIsPlaying = false;
     private static final int MSG_RETRY = 1;
-    private static final int DURATION = 5000;
+    private static final int DURATION = 300;
     private Handler mHandler = new Handler() {
         @Override
         public void handleMessage(Message msg) {
@@ -129,12 +129,16 @@ public class VideoView extends FrameLayout implements IVLCVout.Callback, MediaPl
 
     @Override
     public void onEvent(MediaPlayer.Event event) {
-        Log.d(TAG, "onEvent:" + event.type);
         switch (event.type) {
+            case MediaPlayer.Event.Opening:
+            case MediaPlayer.Event.Buffering:
             case MediaPlayer.Event.Playing://260
+                Log.d(TAG, "onEvent:Playing");
                 mIsPlaying = true;
+                mHandler.removeMessages(MSG_RETRY);
                 break;
             case MediaPlayer.Event.Stopped://262
+                Log.d(TAG, "onEvent:stop");
                 mIsPlaying = false;
                 mHandler.sendEmptyMessageDelayed(MSG_RETRY, DURATION);
                 break;
