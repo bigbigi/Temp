@@ -3,7 +3,7 @@ package com.autofit.widget;
 import android.content.Context;
 import android.util.AttributeSet;
 
-public class ViewPager extends android.support.v4.view.ViewPager implements IAutoFit {
+public class ViewPager extends androidx.viewpager.widget.ViewPager implements IAutoFit {
 
     private boolean mEnableAutoFit = true;
 

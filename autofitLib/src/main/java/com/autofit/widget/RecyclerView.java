@@ -4,7 +4,7 @@ import android.content.Context;
 import android.util.AttributeSet;
 import android.view.ViewGroup;
 
-public class RecyclerView extends android.support.v7.widget.RecyclerView implements IAutoFit {
+public class RecyclerView extends androidx.recyclerview.widget.RecyclerView implements IAutoFit {
     private boolean mEnableAutoFit = true;
 
     public RecyclerView(Context context) {
